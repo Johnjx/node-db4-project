@@ -8,7 +8,29 @@ async function getRecipeById(recipe_id){
         .select('si.ingredient_id', 'quantity', 'st.*', 'ingredient_name', 'ingredient_unit', 'recipe_name')
         .where('st.recipe_id', recipe_id)
 
-    return result;    
+        let today = new Date();
+
+        const recipe = {
+            recipe_id: result[0].recipe_id,
+            recipe_name: result[0].recipe_name,
+            created_at: today.toLocaleString(),
+            steps: result.map(row => (
+                {
+                    step_id: row.step_id,
+                    step_number: row.step_number,
+                    step_instructions: row.step_instructions,
+                    ingredients: [
+                        {
+                            ingredient_id: row.ingredient_id,
+                            ingredient_name: row.ingredient_name,
+                            quantity: row.quantity
+                        }
+                    ]
+                }
+            ))
+        }
+
+    return recipe;    
 }
 
 /**
